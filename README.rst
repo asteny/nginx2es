@@ -1,4 +1,4 @@
-[ ![Download](https://api.bintray.com/packages/asten/nginx2es/nginx2es/images/download.svg) ](https://bintray.com/asten/nginx2es/nginx2es/_latestVersion)
+[![Download](https://api.bintray.com/packages/asten/nginx2es/nginx2es/images/download.svg)](https://bintray.com/asten/nginx2es/nginx2es/_latestVersion)
 
 Put parsed Nginx access.log to Elasticsearch
 ============================================
