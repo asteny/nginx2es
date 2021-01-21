@@ -88,12 +88,12 @@ parser.add_argument("--config",
 parser.add_argument("--gen-config",
                     default=argparse.SUPPRESS,
                     action=GenConfigAction)
-parser.add_argument("filename", nargs="?",
+parser.add_argument("--filename", nargs="?",
                     default=argparse.SUPPRESS,
                     help="file to process (default: /var/log/nginx/access.json)")
 parser.add_argument("--chunk-size", type=int, default=500, help="chunk size for bulk requests")
-parser.add_argument("--elastic-url", action="append", type=URL,
-                    help="Elasticsearch host. Format: https://user:password@host1,host2,host3:9200")
+parser.add_argument("--elastic-url", type=URL,
+                    help="Elasticsearch host. Format: http://user:password@host1,host2,host3:9200")
 parser.add_argument("--min-timestamp",
                     default=argparse.SUPPRESS,
                     help="skip records with timestamp before the specified")
@@ -167,13 +167,13 @@ def main():
     es_kwargs = {'timeout': args.timeout}
     if 'elastic_url' in args:
         elastic_hosts = [
-            URL.build(
+            str(URL.build(
                 scheme=args.elastic_url.scheme,
                 user=args.elastic_url.user,
                 password=args.elastic_url.password,
                 host=host,
                 port=args.elastic_url.port
-            ) for host in args.elastic_url.host.split(",")
+            )) for host in args.elastic_url.host.split(",")
         ]
 
         es_kwargs['hosts'] = elastic_hosts
