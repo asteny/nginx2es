@@ -3,7 +3,7 @@ from __future__ import absolute_import, print_function
 from setuptools import setup, find_packages
 
 
-__version__ = '0.9'
+__version__ = '0.9.1'
 __author__ = 'Andrew Grigorev <andrew@ei-grad.ru>'
 
 setup(
@@ -23,7 +23,7 @@ setup(
         'fast-json==0.3.0',
         'inotify-simple==1.1.7',
         'numpy==1.19.5',
-        'pandas==1.2.1',
+        'pandas==1.1.5',
         'python-dateutil==2.7.3',
         'pytz==2017.3',
         'raven==6.6.0',

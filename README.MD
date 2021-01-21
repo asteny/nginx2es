@@ -5,7 +5,6 @@ Put parsed Nginx access.log to Elasticsearch
 
 Nginx access.log have to be formatted with this format:
 
-.. code-block:: nginx
 
     log_format  main  escape=json '{'
       '"timestamp": "$time_iso8601",'
@@ -42,13 +41,9 @@ Install
 
 Install with pip:
 
-.. code-block:: bash
-
-    pip install nginx2es
+    pip install git+https://github.com/asteny/nginx2es
 
 Install with apt:
-
-.. code-block:: bash
 
     apt-get update
     apt-get install gnupg2 apt-transport-https ca-certificates -y
