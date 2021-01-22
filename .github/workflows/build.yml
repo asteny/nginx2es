@@ -13,7 +13,7 @@ jobs:
     name: Build xenial
     runs-on: ubuntu-16.04
     container:
-      image: asteny/fpm-python-docker:3.7
+      image: asteny/fpm-python-docker:xenial-3.7
     steps:
     - uses: actions/checkout@v2
     - name: build deb package
@@ -42,7 +42,7 @@ jobs:
     name: Build bionic
     runs-on: ubuntu-18.04
     container:
-      image: asteny/fpm-python-docker:3.7
+      image: asteny/fpm-python-docker:bionic-3.7
     steps:
     - uses: actions/checkout@v2
     - name: build deb package
