@@ -1,0 +1,10 @@
+#!/bin/bash
+
+
+DESC="Put nginx logs to Elasticsearch and send stats to carbon"
+
+/bin/systemctl daemon-reload
+/bin/chmod +x /usr/bin/nginx2es
+
+exit 0
+
