@@ -35,7 +35,6 @@ args = (
     '-f', '-t', 'deb',
     '--iteration', os.getenv('ITERATION', '0'),
     '-n', pkg_name,
-    '--deb-systemd', 'contrib/{}.service'.format(pkg_name),
     '-v', version,
     '-p', "package",
     '-d', 'python3.7-minimal',
@@ -45,6 +44,7 @@ args = (
     '-d', 'libcap-ng0',
     '--config-files', '/etc/{}.conf'.format(pkg_name),
     '--after-install', 'contrib/{}.postinstall'.format(pkg_name),
+    '--after-remove', 'contrib/{}.postrm'.format(pkg_name),
 )
 
 depends = check_output((
@@ -63,6 +63,7 @@ for depend in depends:
 args += (
     '{0}/={0}/'.format(ENV_PATH),
     'contrib/{0}.conf=/etc/{0}.conf'.format(pkg_name),
+    'contrib/{0}.service=/lib/systemd/system/{0}.service'.format(pkg_name),
     '/usr/bin/{0}=/usr/bin/{0}'.format(pkg_name),
     'libdir=/var/lib/{0}'.format(pkg_name),
 )

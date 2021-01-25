@@ -1,0 +1,31 @@
+#!/bin/bash
+
+
+DESC="Put nginx logs to Elasticsearch and send stats to carbon"
+
+case "$1" in
+  remove)
+    /bin/systemctl stop nginx2es
+  ;;
+
+  upgrade)
+    /bin/systemctl restart nginx2es
+  ;;
+
+  purge)
+    /bin/rm -fr /etc/nginx2es.conf
+  ;;
+
+  remove|failed-upgrade|abort-install|abort-upgrade|disappear)
+    /bin/systemctl restart nginx2es
+    exit 0
+  ;;
+
+  *)
+    echo "postrm called with unknown argument \`$1'" >&2
+    exit 1
+  ;;
+
+esac
+
+exit 0
