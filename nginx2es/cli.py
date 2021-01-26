@@ -8,9 +8,8 @@ import socket
 import sys
 
 import dateutil
-
+from pathlib import Path
 from arconfig import LoadConfigAction, GenConfigAction
-
 from elasticsearch import Elasticsearch, ConnectionError
 
 import entrypoints
@@ -91,6 +90,8 @@ parser.add_argument("--gen-config",
 parser.add_argument("--filename", nargs="?",
                     default=argparse.SUPPRESS,
                     help="file to process (default: /var/log/nginx/access.json)")
+parser.add_argument("--ca-certs-path", type=Path,
+                    help="path to CA bundle")
 parser.add_argument("--chunk-size", type=int, default=500, help="chunk size for bulk requests")
 parser.add_argument("--elastic-url", type=URL,
                     help="Elasticsearch host. Format: http://user:password@host1,host2,host3:9200")
@@ -165,6 +166,10 @@ def main():
         raven.conf.setup_logging(sentry_handler)
 
     es_kwargs = {'timeout': args.timeout}
+
+    if 'ca_certs_path' in args:
+        es_kwargs['ca_certs'] = args.ca_certs_path
+
     if 'elastic_url' in args:
         elastic_hosts = [
             str(URL.build(
