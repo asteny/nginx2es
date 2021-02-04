@@ -6,7 +6,7 @@ on:
 name: Build deb package
 
 env:
-    PACKAGE_VERSION: "0.9.2"
+    PACKAGE_VERSION: "0.9.3"
 
 jobs:
   xenial:
