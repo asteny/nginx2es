@@ -6,64 +6,48 @@ on:
 name: Build deb package
 
 env:
-    PACKAGE_VERSION: "0.9.3"
+    ITERATION: 0
+    GPGKEY: ${{ secrets.GPGKEY }}
+    GPGPASS: ${{ secrets.GPGPASS }}
+    PACKAGECLOUD_TOKEN: ${{ secrets.PACKAGECLOUD_TOKEN }}
+
 
 jobs:
-  xenial:
-    name: Build xenial
-    runs-on: ubuntu-16.04
-    container:
-      image: asteny/fpm-python-docker:xenial-3.7
+  build:
+    strategy:
+        matrix:
+          ubuntu: ["focal", "xenial", "bionic"]
+
+    runs-on: ubuntu-latest
+    container: asteny/fpm-python-docker:${{ matrix.ubuntu }}-3.7
     steps:
-    - uses: actions/checkout@v2
-    - name: build deb package
-      run: /home/env/bin/python3 package/make-deb.py
-    - name: ls & rename
-      run: |
-          ls -la package/
-          mv package/nginx2es_${{ env.PACKAGE_VERSION }}-0_amd64.deb package/nginx2es_${{ env.PACKAGE_VERSION }}-0-xenial_amd64.deb
-    - name: Upload deb package to Bintray
-      uses: bpicode/github-action-upload-bintray@master
-      with:
-        file: package/nginx2es_${{ env.PACKAGE_VERSION }}-0-xenial_amd64.deb
-        api_user: asten
-        api_key: ${{ secrets.BINTRAY_API_KEY }}
-        repository_user: asten
-        repository: nginx2es
-        package: nginx2es
-        version: ${{ env.PACKAGE_VERSION }}
-        upload_path: pool/main/n/nginx2es
-        publish: 1
-        calculate_metadata: true
-        deb_distribution: xenial
-        deb_component: main
-        deb_architecture: amd64
-  bionic:
-    name: Build bionic
-    runs-on: ubuntu-18.04
-    container:
-      image: asteny/fpm-python-docker:bionic-3.7
-    steps:
-    - uses: actions/checkout@v2
-    - name: build deb package
-      run: /home/env/bin/python3 package/make-deb.py
-    - name: ls & rename
-      run: |
-          ls -la package/
-          mv package/nginx2es_${{ env.PACKAGE_VERSION }}-0_amd64.deb package/nginx2es_${{ env.PACKAGE_VERSION }}-0-bionic_amd64.deb
-    - name: Upload deb package to Bintray
-      uses: bpicode/github-action-upload-bintray@master
-      with:
-        file: package/nginx2es_${{ env.PACKAGE_VERSION }}-0-bionic_amd64.deb
-        api_user: asten
-        api_key: ${{ secrets.BINTRAY_API_KEY }}
-        repository_user: asten
-        repository: nginx2es
-        package: nginx2es
-        version: ${{ env.PACKAGE_VERSION }}
-        upload_path: pool/main/n/nginx2es
-        publish: 1
-        calculate_metadata: true
-        deb_distribution: bionic
-        deb_component: main
-        deb_architecture: amd64
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: |
+          apt-get update && apt-get install gnupg dpkg-sig -y
+          gem install rake package_cloud --no-document
+
+      - name: Prepare gpg
+        run: |
+          echo "$GPGKEY" | base64 --decode > /tmp/private.key
+          gpg --import /tmp/private.key
+          gpg --list-keys
+
+      - name: Get version
+        run: |
+          echo "VERSION=`/home/env/bin/python3 setup.py --version | tr '+' '-'`" >> $GITHUB_ENV
+          echo ${{ env.VERSION }}
+
+      - name: Build deb package
+        run: |
+          /home/env/bin/python3 package/make-deb.py
+
+      - name: Sign deb package
+        run: |
+          md5sum package/nginx2es_${{ env.VERSION }}-${ITERATION}_amd64.deb
+          GPG_TTY=$(tty) dpkg-sig -k EA8AECDE414187DB --sign builder package/nginx2es_${{ env.VERSION }}-${ITERATION}_amd64.deb
+          md5sum package/nginx2es_${{ env.VERSION }}-${ITERATION}_amd64.deb
+
+      - name: Upload package
+        run: |
+          package_cloud push the_asten/nginx2es/ubuntu/${{ matrix.ubuntu }} package/nginx2es_${{ env.VERSION }}-${ITERATION}_amd64.deb --skip-errors

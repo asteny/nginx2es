@@ -1,4 +1,4 @@
-[![Download](https://api.bintray.com/packages/asten/nginx2es/nginx2es/images/download.svg)](https://bintray.com/asten/nginx2es/nginx2es/_latestVersion)
+![build](https://github.com/asteny/nginx2es/actions/workflows/build.yml/badge.svg)
 
 Put parsed Nginx access.log to Elasticsearch
 ============================================
@@ -47,8 +47,9 @@ Install with apt:
 
     apt-get update
     apt-get install gnupg2 apt-transport-https ca-certificates -y
-    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 379CE192D401AB61
-    echo "deb https://dl.bintray.com/asten/nginx2es bionic main" | tee -a /etc/apt/sources.list.d/nginx2es.list
+    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys DA05A43C4C8E9F8B
+    apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys A57ED69D49D1012A
+    printf "deb https://packagecloud.io/the_asten/nginx2es/ubuntu/ focal main \ndeb-src https://packagecloud.io/the_asten/nginx2es/ubuntu/ focal main" | tee -a /etc/apt/sources.list.d/nginx2es.list
     apt-get update
     apt-get install nginx2es -y
 
@@ -70,3 +71,8 @@ Features
   responses.
 
 - The ``tail -F``-like mode implemented with inotify.
+
+
+Special thanks for the ability to use the package repository for open source projects - :rocket: https://packagecloud.io :rocket:
+
+[All package versions in packagecloud.io repo](https://packagecloud.io/the_asten/nginx2es)
