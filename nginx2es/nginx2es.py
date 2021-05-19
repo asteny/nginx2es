@@ -36,7 +36,6 @@ class Nginx2ES(object):
                 yield {
                     '_id': doc.pop('request_id'),
                     '_index': doc['@timestamp'].strftime(self.index),
-                    '_type': 'nginx2es',
                     '_source': doc
                 }
 
